@@ -4,5 +4,11 @@
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_status">StatusActivity</string>
+    <string name="titleUsername">Username</string>
+    <string name="summaryUsername">Enter your user name here.</string>
+    <string name="titlePassword">Password</string>
+    <string name="summaryPassword">Enter your password here.</string>
+    <string name="titleApiRoot">API Root</string>
+    <string name="summaryApiRoot">Enter your micro-blogging service URL here.</string>
 
 </resources>

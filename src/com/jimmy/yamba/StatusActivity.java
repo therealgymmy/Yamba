@@ -1,6 +1,7 @@
 package com.jimmy.yamba;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -51,6 +53,18 @@ public class StatusActivity extends Activity implements OnClickListener,
         return true;
     }
 
+    // Called when an options item is clicked
+    @Override
+    public boolean onOptionsItemSelected (MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_settings:
+                startActivity(new Intent(this, PrefsActivity.class));
+                break;
+        }
+
+        return true;
+    }
+
     // Called when button is clicked
     public void onClick(View v) {
         String status = editText.getText().toString();
@@ -62,7 +76,7 @@ public class StatusActivity extends Activity implements OnClickListener,
     class PostToTwitter extends AsyncTask<String, Integer, String> {
         // Called to initiate the background activity
         @Override
-        protected String doInBackground(String... statuses) {
+        protected String doInBackground (String... statuses) {
             try {
                 winterwell.jtwitter.Status status = twitter.updateStatus(statuses[0]);
                 return status.text;
@@ -75,20 +89,20 @@ public class StatusActivity extends Activity implements OnClickListener,
 
         // Called when there's a status to be updated
         @Override
-        protected void onProgressUpdate(Integer... values) {
+        protected void onProgressUpdate (Integer... values) {
             super.onProgressUpdate(values);
             // Not used in this case.
         }
 
         // Called once the background activity has completed
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute (String result) {
             Toast.makeText(StatusActivity.this, result, Toast.LENGTH_LONG).show();
         }
     }
 
     // TextWatcher methods
-    public void afterTextChanged(Editable statusText) {
+    public void afterTextChanged (Editable statusText) {
         int count = 140 - statusText.length();
         textCount.setText(Integer.toString(count));
         textCount.setTextColor(Color.GREEN);
@@ -100,6 +114,6 @@ public class StatusActivity extends Activity implements OnClickListener,
         }
     }
 
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-    public void onTextChanged(CharSequence s, int start, int count, int after) {}
+    public void beforeTextChanged (CharSequence s, int start, int count, int after) {}
+    public void onTextChanged (CharSequence s, int start, int count, int after) {}
 }
