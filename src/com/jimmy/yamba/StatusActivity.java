@@ -2,9 +2,12 @@ package com.jimmy.yamba;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -21,12 +24,14 @@ import winterwell.jtwitter.Twitter;
 import winterwell.jtwitter.TwitterException;
 
 public class StatusActivity extends Activity implements OnClickListener,
-                                                        TextWatcher {
+                                                        TextWatcher,
+                                                        OnSharedPreferenceChangeListener {
     private static final String TAG = "StatusActivity";
     EditText editText;
     Button updateButton;
     Twitter twitter;
     TextView textCount;
+    SharedPreferences prefs;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,6 +50,10 @@ public class StatusActivity extends Activity implements OnClickListener,
 
         twitter = new Twitter("test_user_beyondsora", "test_user_beyondsora");
         twitter.setAPIRootUrl("http://www.Identi.ca/api");
+
+        // Setup preferences
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -72,18 +81,23 @@ public class StatusActivity extends Activity implements OnClickListener,
         Log.d(TAG, "onClicked");
     }
 
+    public void onSharedPreferenceChanged (SharedPreferences prefs, String key) {
+        // invalidate twitter object
+        twitter = null;
+    }
+
     // Asynchronously posts to twitter
     class PostToTwitter extends AsyncTask<String, Integer, String> {
         // Called to initiate the background activity
         @Override
         protected String doInBackground (String... statuses) {
             try {
-                winterwell.jtwitter.Status status = twitter.updateStatus(statuses[0]);
+                winterwell.jtwitter.Status status = getTwitter().updateStatus(statuses[0]);
                 return status.text;
             } catch (TwitterException e) {
                 Log.e(TAG, e.toString());
                 e.printStackTrace();
-                return "Faled to post";
+                return "Failed to post";
             }
         }
 
@@ -116,4 +130,18 @@ public class StatusActivity extends Activity implements OnClickListener,
 
     public void beforeTextChanged (CharSequence s, int start, int count, int after) {}
     public void onTextChanged (CharSequence s, int start, int count, int after) {}
+
+    private Twitter getTwitter () {
+        if (twitter == null) {
+            String username, password, apiRoot;
+            username = prefs.getString("username", "");
+            password = prefs.getString("password", "");
+            apiRoot = prefs.getString("apiRoot", "http://www.Identi.ca/api");
+
+            // Connect to twitter.com
+            twitter = new Twitter(username, password);
+            twitter.setAPIRootUrl(apiRoot);
+        }
+        return twitter;
+    }
 }
