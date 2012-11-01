@@ -92,10 +92,11 @@ public class StatusActivity extends Activity implements OnClickListener,
         @Override
         protected String doInBackground (String... statuses) {
             try {
-                winterwell.jtwitter.Status status = getTwitter().updateStatus(statuses[0]);
+            	YambaApplication yamba = ((YambaApplication) getApplication());
+                winterwell.jtwitter.Status status = yamba.getTwitter().updateStatus(statuses[0]);
                 return status.text;
             } catch (TwitterException e) {
-                Log.e(TAG, e.toString());
+                Log.e(TAG, "Failed to connect to twitter service", e);
                 e.printStackTrace();
                 return "Failed to post";
             }
