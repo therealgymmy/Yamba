@@ -10,5 +10,7 @@
     <string name="summaryPassword">Enter your password here.</string>
     <string name="titleApiRoot">API Root</string>
     <string name="summaryApiRoot">Enter your micro-blogging service URL here.</string>
+    <string name="titleServiceStart">Start the service</string>
+    <string name="titleServiceStop">Stop the service</string>
 
 </resources>
