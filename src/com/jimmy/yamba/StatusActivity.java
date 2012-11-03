@@ -98,7 +98,7 @@ public class StatusActivity extends Activity implements OnClickListener,
         @Override
         protected String doInBackground (String... statuses) {
             try {
-            	YambaApplication yamba = ((YambaApplication) getApplication());
+                YambaApplication yamba = ((YambaApplication) getApplication());
                 winterwell.jtwitter.Status status = yamba.getTwitter().updateStatus(statuses[0]);
                 return status.text;
             } catch (TwitterException e) {
