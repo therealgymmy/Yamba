@@ -1,17 +1,10 @@
 package com.jimmy.yamba;
 
-import java.util.List;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.SQLException;
 import android.os.IBinder;
 import android.util.Log;
-
-import winterwell.jtwitter.Twitter;
-import winterwell.jtwitter.TwitterException;
 
 public class UpdaterService extends Service {
     private static final String TAG = "UpdaterService";
@@ -21,8 +14,8 @@ public class UpdaterService extends Service {
     private Updater updater;
     private YambaApplication yamba;
 
-    DbHelper dbHelper;
-    SQLiteDatabase db;
+    //DbHelper dbHelper;
+    //SQLiteDatabase db;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -35,7 +28,7 @@ public class UpdaterService extends Service {
         this.yamba = (YambaApplication) getApplication();
         this.updater = new Updater();
 
-        dbHelper = new DbHelper(this);
+        //dbHelper = new DbHelper(this);
 
         Log.d(TAG, "onCreated");
     }
@@ -66,7 +59,7 @@ public class UpdaterService extends Service {
 
     // Thread that performs the actual update from the online service
     private class Updater extends Thread {
-        List<winterwell.jtwitter.Status> timeline;
+        //List<winterwell.jtwitter.Status> timeline;
 
         public Updater () {
             super("UpdaterService-Updater");
@@ -76,36 +69,14 @@ public class UpdaterService extends Service {
         public void run () {
             UpdaterService updaterService = UpdaterService.this;
             while (updaterService.runFlag) {
-                Log.d(TAG, "Updater running");
+                Log.d(TAG, "Running background thread");
                 try {
-                    // Get the timeline from the cloud
-                    try {
-                        timeline = yamba.getTwitter().getHomeTimeline();
-                    } catch (TwitterException e) {
-                        Log.e(TAG, "Failed to connect to twitter service", e);
-                    }
-
-                    // Open the database for writing
-                    db = dbHelper.getWritableDatabase();
-
-                    // Loop over the timelien and print it out
-                    ContentValues values = new ContentValues();
-                    for (winterwell.jtwitter.Status status : timeline) {
-                        // Insert into database
-                        values.clear();
-                        values.put(DbHelper.C_ID, status.id.toString());
-                        values.put(DbHelper.C_CREATED_AT, status.createdAt.getTime());
-                        values.put(DbHelper.C_TEXT, status.text);
-                        values.put(DbHelper.C_USER, status.user.name);
-                        try {
-                            db.insertOrThrow(DbHelper.TABLE, null, values);
-                            Log.d(TAG, String.format("%s: %s", status.user.name, status.text));
-                        } catch (SQLException e) {
-                            // Ignore exception, like a real BOSS
-                        }
-                    }
-
-                    Log.d(TAG, "Updater ran");
+                	YambaApplication yamba = (YambaApplication) updaterService.getApplication();
+                	int newUpdates = yamba.fetchStatusUpdates();
+                	if(newUpdates > 0) {
+                		Log.d(TAG, "We have a new status");
+                		
+                	}
                     Thread.sleep(DELAY);
                 } catch (InterruptedException e) {
                     updaterService.runFlag = false;
