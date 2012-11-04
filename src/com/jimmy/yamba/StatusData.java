@@ -15,7 +15,7 @@ public class StatusData {
 	static final String TABLE = "timeline";
 	public static final String C_ID = "_id";
 	public static final String C_CREATED_AT = "created_at";
-	public static final String C_TEXT = "txt";
+	public static final String C_TEXT = "text";
 	public static final String C_USER = "user";
 	
 	private static final String GET_ALL_ORDER_BY = C_CREATED_AT + " DESC";
